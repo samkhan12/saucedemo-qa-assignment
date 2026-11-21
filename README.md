@@ -55,6 +55,20 @@ The assignment asks for at least 8 automated cases, so `npm test` runs these 8:
 
 The other cases in `docs/TEST_CASES.md` (negative, edge, UI, and the problem_user / performance_glitch_user ones) are manual. The ones needed for the bug reports are captured by `npm run evidence`.
 
+**##Bugs Found**
+Bug Reports
+Each bug is a separate GitHub Issue with its screenshot, and they are on the Project board. The full write-ups are in docs/bugs/ and the screenshots are in docs/screenshots/.
+
+**ID	Title	User	Severity	Priority**
+
+* BUG-001	All products show the same image	problem_user	Medium	P2
+* BUG-002	Sorting does not change the product order	problem_user	High	P2
+* BUG-003	Add to cart / Remove buttons do not work for some products	problem_user	High	P1
+* BUG-004	Last Name typed in checkout goes into First Name, order can't be placed	problem_user	Critical	P1
+* BUG-005	Login takes several seconds with no loading indicator	performance_glitch_user	Medium	P2
+* BUG-006	Order can be placed with an empty cart	standard_user	Medium	P2
+* BUG-007 Page not found on click 'About' problem_user High P1
+
 ## API tests
 The collection is in `postman/`. Every request checks the status code and the shape of the body, not just the 200.
 
@@ -75,3 +89,13 @@ reqres.in demo endpoints worked without a key when I checked the docs. If that c
 
 ## CI
 `.github/workflows/ci.yml` runs the UI job and the API job on every push and uploads the reports.
+
+
+Step 1: Execute GitHub Issues script
+gh auth status
+bash scripts/create-github-issues.sh
+
+
+Step 2: Execute Kanban board script
+gh auth refresh -s project
+bash scripts/setup-project-board.sh
