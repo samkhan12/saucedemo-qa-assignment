@@ -1,0 +1,32 @@
+[2026-11-21T10:38:45.168495200] BUG-001 image sources=[https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg] distinct=1 of 6
+[2026-11-21T10:38:47.025034700] BUG-002 before=[Sauce Labs Backpack, Sauce Labs Bike Light, Sauce Labs Bolt T-Shirt, Sauce Labs Fleece Jacket, Sauce Labs Onesie, Test.allTheThings() T-Shirt (Red)] afterZtoA=[Sauce Labs Backpack, Sauce Labs Bike Light, Sauce Labs Bolt T-Shirt, Sauce Labs Fleece Jacket, Sauce Labs Onesie, Test.allTheThings() T-Shirt (Red)] changed=false
+[2026-11-21T10:38:48.900357700] BUG-003 item#1 clicked 'Add to cart' -> button now 'Remove', badge=1
+[2026-11-21T10:38:48.971602500] BUG-003 item#2 clicked 'Add to cart' -> button now 'Remove', badge=2
+[2026-11-21T10:38:49.040673300] BUG-003 item#3 clicked 'Add to cart' -> button now 'Add to cart', badge=2
+[2026-11-21T10:38:49.110713700] BUG-003 item#4 clicked 'Add to cart' -> button now 'Add to cart', badge=2
+[2026-11-21T10:38:49.180846500] BUG-003 item#5 clicked 'Add to cart' -> button now 'Remove', badge=3
+[2026-11-21T10:38:49.249501800] BUG-003 item#6 clicked 'Add to cart' -> button now 'Add to cart', badge=3
+[2026-11-21T10:38:49.614921600] BUG-003 after clicking Remove on every item, badge=3
+[2026-11-21T10:38:51.807793700] BUG-004 typed first=John last=Doe -> fields hold first='e' last=''
+[2026-11-21T10:38:51.924308] BUG-004 after Continue, error=Error: Last Name is required
+[2026-11-21T10:38:58.518823300] BUG-005 performance_glitch_user login took 5145 ms (standard_user is typically well under 1000 ms)
+[2026-11-21T10:38:58.909025500] BUG-005 baseline standard_user login took 86 ms
+[2026-11-21T10:39:00.444542200] BUG-006 cart items before checkout=0
+[2026-11-21T10:39:00.509540800] BUG-006 URL after clicking Checkout with empty cart=https://www.saucedemo.com/checkout-step-one.html
+[2026-11-21T10:39:00.932968700] BUG-006 order result header='Thank you for your order!' url=https://www.saucedemo.com/checkout-complete.html
+[2026-11-21T11:08:02.856329] BUG-001 image sources=[https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg, https://www.saucedemo.com/assets/sl-404-Cq1a9k9X.jpg] distinct=1 of 6
+[2026-11-21T11:08:04.776168] BUG-002 before=[Sauce Labs Backpack, Sauce Labs Bike Light, Sauce Labs Bolt T-Shirt, Sauce Labs Fleece Jacket, Sauce Labs Onesie, Test.allTheThings() T-Shirt (Red)] afterZtoA=[Sauce Labs Backpack, Sauce Labs Bike Light, Sauce Labs Bolt T-Shirt, Sauce Labs Fleece Jacket, Sauce Labs Onesie, Test.allTheThings() T-Shirt (Red)] changed=false
+[2026-11-21T11:08:06.459198600] BUG-003 item#1 clicked 'Add to cart' -> button now 'Remove', badge=1
+[2026-11-21T11:08:06.526604600] BUG-003 item#2 clicked 'Add to cart' -> button now 'Remove', badge=2
+[2026-11-21T11:08:06.594604100] BUG-003 item#3 clicked 'Add to cart' -> button now 'Add to cart', badge=2
+[2026-11-21T11:08:06.662358900] BUG-003 item#4 clicked 'Add to cart' -> button now 'Add to cart', badge=2
+[2026-11-21T11:08:06.730358600] BUG-003 item#5 clicked 'Add to cart' -> button now 'Remove', badge=3
+[2026-11-21T11:08:06.797581500] BUG-003 item#6 clicked 'Add to cart' -> button now 'Add to cart', badge=3
+[2026-11-21T11:08:07.220119200] BUG-003 after clicking Remove on every item, badge=3
+[2026-11-21T11:08:09.316597100] BUG-004 typed first=John last=Doe -> fields hold first='e' last=''
+[2026-11-21T11:08:09.463596900] BUG-004 after Continue, error=Error: Last Name is required
+[2026-11-21T11:08:16.180575700] BUG-005 performance_glitch_user login took 5134 ms (standard_user is typically well under 1000 ms)
+[2026-11-21T11:08:16.628929300] BUG-005 baseline standard_user login took 85 ms
+[2026-11-21T11:08:18.296392500] BUG-006 cart items before checkout=0
+[2026-11-21T11:08:18.372538500] BUG-006 URL after clicking Checkout with empty cart=https://www.saucedemo.com/checkout-step-one.html
+[2026-11-21T11:08:18.835066700] BUG-006 order result header='Thank you for your order!' url=https://www.saucedemo.com/checkout-complete.html

@@ -1,0 +1,21 @@
+{
+  "name": "saucedemo-qa-assignment",
+  "version": "1.0.0",
+  "description": "Senior QA assignment: manual test plan, bug reports, Selenium + TestNG + Maven UI automation (SauceDemo) and Postman/Newman API tests (ReqRes)",
+  "private": true,
+  "scripts": {
+    "test": "npm run test:ui && npm run test:api",
+    "test:ui": "mvn -B test",
+    "test:ui:headed": "mvn -B test -Dheadless=false",
+    "test:api": "newman run postman/reqres.postman_collection.json -e postman/reqres.postman_environment.json --reporters cli,junit --reporter-junit-export target/newman/results.xml",
+    "evidence": "mvn -B -q test -DsuiteFile=src/test/resources/testng-evidence.xml",
+    "issues": "bash scripts/create-github-issues.sh",
+    "board": "bash scripts/setup-project-board.sh"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

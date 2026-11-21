@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!-- Captures screenshots + observations for the bug reports (Part 2).
+     Run with: npm run evidence -->
+<suite name="SauceDemo Bug Evidence" verbose="1">
+    <test name="Bug evidence capture">
+        <classes>
+            <class name="com.saucedemo.tests.BugEvidenceTests"/>
+        </classes>
+    </test>
+</suite>

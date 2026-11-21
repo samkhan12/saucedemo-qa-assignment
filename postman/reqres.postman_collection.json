@@ -1,0 +1,653 @@
+{
+  "info": {
+    "name": "ReqRes API Tests",
+    "description": "Assertions on status codes AND response body shape for https://reqres.in. Run with: npm run test:api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const key = pm.environment.get('api_key') || pm.collectionVariables.get('api_key');",
+          "if (key) { pm.request.headers.upsert({ key: 'x-api-key', value: key }); }"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "01 GET list users (page 2) - 200 + body shape",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"List envelope has pagination fields with correct types\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.page).to.equal(2);",
+              "    pm.expect(j.per_page).to.be.a('number').and.above(0);",
+              "    pm.expect(j.total).to.be.a('number');",
+              "    pm.expect(j.total_pages).to.be.a('number').and.at.least(2);",
+              "    pm.expect(j.data).to.be.an('array').and.not.empty;",
+              "    pm.expect(j.data.length).to.be.at.most(j.per_page);",
+              "});",
+              "pm.test(\"Every user object has the expected shape\", function () {",
+              "    const j = pm.response.json();",
+              "    j.data.forEach(function (u) {",
+              "        pm.expect(u).to.be.an('object');",
+              "        pm.expect(u.id).to.be.a('number');",
+              "        pm.expect(u.email).to.be.a('string').and.to.match(/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/);",
+              "        pm.expect(u.first_name).to.be.a('string').and.not.empty;",
+              "        pm.expect(u.last_name).to.be.a('string').and.not.empty;",
+              "        pm.expect(u.avatar).to.be.a('string').and.to.match(/^https?:\\/\\//);",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/users?page=2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "02 GET single user (id 2) - 200 + body shape",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Body contains data object for user 2 with expected fields\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j).to.have.property('data');",
+              "    pm.expect(j.data.id).to.equal(2);",
+              "    pm.expect(j.data).to.be.an('object');",
+              "    pm.expect(j.data.id).to.be.a('number');",
+              "    pm.expect(j.data.email).to.be.a('string').and.to.match(/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/);",
+              "    pm.expect(j.data.first_name).to.be.a('string').and.not.empty;",
+              "    pm.expect(j.data.last_name).to.be.a('string').and.not.empty;",
+              "    pm.expect(j.data.avatar).to.be.a('string').and.to.match(/^https?:\\/\\//);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/users/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "2"
+          ]
+        }
+      }
+    },
+    {
+      "name": "03 POST create user - 201 + echoed fields + id/createdAt",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Response echoes request data and adds id and createdAt\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.name).to.equal('morpheus');",
+              "    pm.expect(j.job).to.equal('leader');",
+              "    pm.expect(j.id).to.exist;",
+              "    pm.expect(String(j.id)).to.match(/^\\d+$/);",
+              "    pm.expect(j.createdAt).to.be.a('string');",
+              "    pm.expect(isNaN(Date.parse(j.createdAt))).to.be.false;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"morpheus\",\n  \"job\": \"leader\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users"
+          ]
+        }
+      }
+    },
+    {
+      "name": "04 POST register (success) - 200 + id and token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Response has numeric id and non-empty token\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.id).to.be.a('number');",
+              "    pm.expect(j.token).to.be.a('string').and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"eve.holt@reqres.in\",\n  \"password\": \"pistol\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "05 POST login (success) - 200 + token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Response has a non-empty string token and nothing resembling an error\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.token).to.be.a('string').and.not.empty;",
+              "    pm.expect(j).to.not.have.property('error');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"eve.holt@reqres.in\",\n  \"password\": \"cityslicka\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "06 POST login (missing password) - 400 + error message",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Error body explains the missing password and has no token\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j).to.have.property('error');",
+              "    pm.expect(j.error).to.be.a('string').and.to.match(/missing password/i);",
+              "    pm.expect(j).to.not.have.property('token');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"peter@klaven\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "07 POST login (missing email) - 400 + error message",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Error body explains the missing email/username and has no token\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.error).to.be.a('string').and.to.match(/missing (email|username)/i);",
+              "    pm.expect(j).to.not.have.property('token');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"password\": \"cityslicka\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "08 POST register (missing password) - 400 + error message",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Error body explains the missing password and has no token/id\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.error).to.be.a('string').and.to.match(/missing password/i);",
+              "    pm.expect(j).to.not.have.property('token');",
+              "    pm.expect(j).to.not.have.property('id');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"sydney@fife\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "09 POST register (empty body) - 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Error body is present and no token is issued\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.error).to.be.a('string').and.not.empty;",
+              "    pm.expect(j).to.not.have.property('token');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "10 GET single user (id 23, not found) - 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "pm.test(\"Not-found body does not contain a user\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j).to.be.an('object');",
+              "    pm.expect(j).to.not.have.property('data');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/users/23",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "23"
+          ]
+        }
+      }
+    },
+    {
+      "name": "11 GET unknown resource (id 23, not found) - 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "pm.test(\"Not-found body does not contain a resource\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j).to.be.an('object');",
+              "    pm.expect(j).to.not.have.property('data');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/unknown/23",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "unknown",
+            "23"
+          ]
+        }
+      }
+    },
+    {
+      "name": "12 PUT update user - 200 + updatedAt",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Content-Type is JSON\", function () {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});",
+              "pm.test(\"Response reflects update and includes updatedAt\", function () {",
+              "    const j = pm.response.json();",
+              "    pm.expect(j.name).to.equal('morpheus');",
+              "    pm.expect(j.job).to.equal('zion resident');",
+              "    pm.expect(j.updatedAt).to.be.a('string');",
+              "    pm.expect(isNaN(Date.parse(j.updatedAt))).to.be.false;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"morpheus\",\n  \"job\": \"zion resident\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "2"
+          ]
+        }
+      }
+    },
+    {
+      "name": "13 DELETE user - 204 + empty body",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});",
+              "pm.test(\"Response body is empty\", function () {",
+              "    pm.expect(pm.response.text()).to.equal('');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/users/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "2"
+          ]
+        }
+      }
+    }
+  ]
+}
